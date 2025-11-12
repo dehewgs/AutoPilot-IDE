@@ -26,9 +26,11 @@ class ProductionConfig(Config):
     HOST = os.environ.get('HOST', '0.0.0.0')
     PORT = int(os.environ.get('PORT', 8000))
     
-    # Production must have SECRET_KEY set
-    if not os.environ.get('SECRET_KEY'):
-        raise ValueError("SECRET_KEY environment variable must be set in production")
+    @classmethod
+    def validate(cls):
+        """Validate production configuration - call this when actually using production config"""
+        if not os.environ.get('SECRET_KEY'):
+            raise ValueError("SECRET_KEY environment variable must be set in production")
 
 class TestingConfig(Config):
     """Testing configuration"""
