@@ -2224,33 +2224,7 @@
                 <!-- Recent Projects Tab -->
                 <div id="recentTab" class="project-tab-content active">
                     <div class="recent-projects-list">
-                        <div class="project-item" onclick="openProject('AutoPilot-Project')">
-                            <div class="project-icon">📁</div>
-                            <div class="project-info">
-                                <div class="project-title">AutoPilot-Project</div>
-                                <div class="project-path">/home/user/projects/AutoPilot-Project</div>
-                                <div class="project-date">Opened today</div>
-                            </div>
-                            <div class="project-arrow">→</div>
-                        </div>
-                        <div class="project-item" onclick="openProject('WebApp-Demo')">
-                            <div class="project-icon">📁</div>
-                            <div class="project-info">
-                                <div class="project-title">WebApp-Demo</div>
-                                <div class="project-path">/home/user/projects/WebApp-Demo</div>
-                                <div class="project-date">Opened 2 days ago</div>
-                            </div>
-                            <div class="project-arrow">→</div>
-                        </div>
-                        <div class="project-item" onclick="openProject('Python-Utils')">
-                            <div class="project-icon">📁</div>
-                            <div class="project-info">
-                                <div class="project-title">Python-Utils</div>
-                                <div class="project-path">/home/user/projects/Python-Utils</div>
-                                <div class="project-date">Opened 1 week ago</div>
-                            </div>
-                            <div class="project-arrow">→</div>
-                        </div>
+                        <!-- Populated by ProjectManager -->
                     </div>
                 </div>
                 
@@ -2564,109 +2538,226 @@
     </style>
 
     <script>
-    function openProjectModal() {
-        const modal = document.getElementById('projectModal');
-        modal.classList.add('show');
-    }
+    // This script contains the fixed project system functions
 
-    function closeProjectModal() {
-        const modal = document.getElementById('projectModal');
-        modal.classList.remove('show');
+function initializeProjectSystem() {
+    console.log('[ProjectSystem] Initializing project system...');
+    
+    // Load project manager
+    if (typeof projectManager !== 'undefined') {
+        updateRecentProjectsList();
+        updateCurrentProjectDisplay();
+        console.log('[ProjectSystem] Project system initialized successfully');
+    } else {
+        console.error('[ProjectSystem] ProjectManager not loaded');
     }
+}
 
-    function switchProjectTab(tabName) {
-        document.querySelectorAll('.project-tab-content').forEach(tab => {
-            tab.classList.remove('active');
+function updateRecentProjectsList() {
+    const recentList = document.querySelector('.recent-projects-list');
+    if (!recentList) return;
+    
+    const recentProjects = projectManager.getRecentProjects(10);
+    
+    recentList.innerHTML = recentProjects.map(project => `
+        <div class="project-item" data-project-id="${project.id}">
+            <div class="project-icon">📁</div>
+            <div class="project-info">
+                <div class="project-title">${project.name}</div>
+                <div class="project-path">${project.path}</div>
+                <div class="project-date">${projectManager.formatDate(project.lastOpened)}</div>
+            </div>
+            <div class="project-arrow">→</div>
+        </div>
+    `).join('');
+    
+    // Add click handlers to project items
+    document.querySelectorAll('.project-item[data-project-id]').forEach(item => {
+        item.addEventListener('click', function() {
+            const projectId = this.getAttribute('data-project-id');
+            openProject(projectId);
         });
-        document.querySelectorAll('.project-tab').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        document.getElementById(tabName + 'Tab').classList.add('active');
-        event.target.classList.add('active');
-    }
+    });
+    
+    console.log('[ProjectSystem] Updated recent projects list');
+}
 
-    function openProject(projectName) {
-        console.log('[ProjectOpener] Opening project:', projectName);
-        
-        const projectNameEl = document.querySelector('.project-name');
-        if (projectNameEl) {
-            projectNameEl.textContent = projectName;
-        }
-        
-        const fileTree = document.getElementById('fileTree');
-        if (fileTree) {
-            fileTree.innerHTML = `
-                <div class="file-item" onclick="selectFile(this, 'main.py')">
-                    <span class="file-icon">📄</span>
-                    <span>main.py</span>
-                </div>
-                <div class="file-item" onclick="selectFile(this, 'config.json')">
-                    <span class="file-icon">📄</span>
-                    <span>config.json</span>
-                </div>
-                <div class="file-item" onclick="selectFile(this, 'README.md')">
-                    <span class="file-icon">📄</span>
-                    <span>README.md</span>
+function updateCurrentProjectDisplay() {
+    const currentProject = projectManager.getCurrentProject();
+    if (!currentProject) return;
+    
+    // Update project name in sidebar
+    const projectNameEl = document.querySelector('.project-name');
+    if (projectNameEl) {
+        projectNameEl.textContent = currentProject.name;
+    }
+    
+    // Update file tree
+    updateFileTree(currentProject);
+    
+    console.log('[ProjectSystem] Updated current project display:', currentProject.name);
+}
+
+function updateFileTree(project) {
+    const fileTree = document.getElementById('fileTree');
+    if (!fileTree) return;
+    
+    if (!project.files || project.files.length === 0) {
+        fileTree.innerHTML = '<div class="empty-state">No files in project</div>';
+        return;
+    }
+    
+    fileTree.innerHTML = project.files.map(file => `
+        <div class="file-item" onclick="selectFile(this, '${file.name}')">
+            <span class="file-icon">${file.icon}</span>
+            <span>${file.name}</span>
+        </div>
+    `).join('');
+    
+    console.log('[ProjectSystem] Updated file tree with', project.files.length, 'files');
+}
+
+function openProjectModal() {
+    const modal = document.getElementById('projectModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        updateRecentProjectsList();
+        console.log('[ProjectSystem] Opened project modal');
+    }
+}
+
+function closeProjectModal() {
+    const modal = document.getElementById('projectModal');
+    if (modal) {
+        modal.style.display = 'none';
+        console.log('[ProjectSystem] Closed project modal');
+    }
+}
+
+function switchProjectTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.project-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show selected tab
+    const selectedTab = document.getElementById(tabName + 'Tab');
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    
+    // Update tab buttons
+    document.querySelectorAll('.project-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    console.log('[ProjectSystem] Switched to tab:', tabName);
+}
+
+function openProject(projectId) {
+    console.log('[ProjectSystem] Opening project:', projectId);
+    
+    if (projectManager.setCurrentProject(projectId)) {
+        updateCurrentProjectDisplay();
+        closeProjectModal();
+        console.log('[ProjectSystem] Project opened successfully');
+    } else {
+        console.error('[ProjectSystem] Failed to open project:', projectId);
+    }
+}
+
+function selectFile(element, fileName) {
+    // Remove active class from all files
+    document.querySelectorAll('.file-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Add active class to selected file
+    element.classList.add('active');
+    
+    // Update editor tab
+    const editorTabs = document.querySelector('.tabs');
+    if (editorTabs) {
+        const existingTab = editorTabs.querySelector('.tab');
+        if (existingTab) {
+            existingTab.innerHTML = `
+                <span class="file-icon">📄</span>
+                <span>${fileName}</span>
+                <div class="tab-close" onclick="event.stopPropagation();">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
                 </div>
             `;
         }
+    }
+    
+    console.log('[ProjectSystem] Selected file:', fileName);
+}
+
+function browseProjects() {
+    console.log('[ProjectSystem] Browse projects clicked');
+    const pathInput = document.getElementById('projectPath');
+    if (pathInput) {
+        pathInput.focus();
+    }
+}
+
+function createNewProject() {
+    const name = document.getElementById('newProjectName').value;
+    const type = document.getElementById('projectType').value;
+    const location = document.getElementById('projectLocation').value;
+    
+    if (!name || name.trim() === '') {
+        alert('Please enter a project name');
+        return;
+    }
+    
+    try {
+        const project = projectManager.createProject(
+            name.trim(),
+            type,
+            location || undefined
+        );
         
+        console.log('[ProjectSystem] Project created:', project.name);
+        
+        // Clear form
+        document.getElementById('newProjectName').value = '';
+        document.getElementById('projectLocation').value = '';
+        
+        // Update display
+        updateCurrentProjectDisplay();
+        updateRecentProjectsList();
         closeProjectModal();
-        console.log('[ProjectOpener] Project loaded successfully');
-    }
-
-    function selectFile(element, fileName) {
-        document.querySelectorAll('.file-item').forEach(item => {
-            item.classList.remove('active');
-        });
         
-        element.classList.add('active');
-        
-        const editorTabs = document.querySelector('.tabs');
-        if (editorTabs) {
-            const existingTab = editorTabs.querySelector('.tab');
-            if (existingTab) {
-                existingTab.innerHTML = `
-                    <span class="file-icon">📄</span>
-                    <span>${fileName}</span>
-                    <div class="tab-close" onclick="event.stopPropagation();">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 6L6 18M6 6l12 12"/>
-                        </svg>
-                    </div>
-                `;
-            }
-        }
-    }
-
-    function browseProjects() {
-        console.log('[ProjectOpener] Browse projects clicked');
-        alert('Browse functionality would open a file picker dialog');
-    }
-
-    function createNewProject() {
-        const name = document.getElementById('newProjectName').value;
-        const type = document.getElementById('projectType').value;
-        const location = document.getElementById('projectLocation').value;
-        
-        if (!name) {
-            alert('Please enter a project name');
-            return;
-        }
-        
-        console.log('[ProjectOpener] Creating new project:', { name, type, location });
         alert(`Project "${name}" created successfully!`);
-        closeProjectModal();
+    } catch (error) {
+        console.error('[ProjectSystem] Error creating project:', error);
+        alert('Error creating project: ' + error.message);
     }
+}
 
-    window.addEventListener('click', function(event) {
-        const modal = document.getElementById('projectModal');
-        if (event.target === modal) {
-            closeProjectModal();
-        }
-    });
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeProjectSystem);
+} else {
+    initializeProjectSystem();
+}
     </script>
 
+    <script src="js/project-manager.js"></script>
+    <script>
+        // Initialize project system when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof projectManager !== 'undefined') {
+                console.log('[Init] ProjectManager loaded successfully');
+                initializeProjectSystem();
+            } else {
+                console.error('[Init] ProjectManager failed to load');
+            }
+        });
+    </script>
 </body>
 </html>
