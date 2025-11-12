@@ -1,10 +1,12 @@
 /**
  * UI Module - Handles UI interactions and updates
+ * Fixed: Notification positioning to center top, not covering integration buttons
  */
 
 const UIModule = (() => {
     const modals = {};
     let notificationTimeout = null;
+    let activeNotification = null;
 
     const init = () => {
         console.log('[UIModule] Initializing...');
@@ -19,6 +21,110 @@ const UIModule = (() => {
                 console.warn(`[UIModule] Modal not found: ${id}`);
             }
         });
+
+        // Add notification styles to document
+        addNotificationStyles();
+    };
+
+    const addNotificationStyles = () => {
+        // Check if styles already exist
+        if (document.getElementById('notification-styles')) return;
+
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            .notification {
+                position: fixed;
+                top: 60px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 14px 24px;
+                border-radius: 8px;
+                z-index: 10000;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(10px);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 300px;
+                max-width: 500px;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .notification::before {
+                content: '';
+                font-size: 18px;
+            }
+
+            .notification-info {
+                background: rgba(102, 126, 234, 0.95);
+                color: white;
+                border: 1px solid rgba(102, 126, 234, 0.3);
+            }
+
+            .notification-info::before {
+                content: 'ℹ️';
+            }
+
+            .notification-success {
+                background: rgba(76, 175, 80, 0.95);
+                color: white;
+                border: 1px solid rgba(76, 175, 80, 0.3);
+            }
+
+            .notification-success::before {
+                content: '✅';
+            }
+
+            .notification-error {
+                background: rgba(244, 67, 54, 0.95);
+                color: white;
+                border: 1px solid rgba(244, 67, 54, 0.3);
+            }
+
+            .notification-error::before {
+                content: '❌';
+            }
+
+            .notification-warning {
+                background: rgba(255, 152, 0, 0.95);
+                color: white;
+                border: 1px solid rgba(255, 152, 0, 0.3);
+            }
+
+            .notification-warning::before {
+                content: '⚠️';
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+            }
+
+            .notification.hiding {
+                animation: slideUp 0.3s ease-out;
+            }
+        `;
+        document.head.appendChild(style);
     };
 
     const showModal = (modalId) => {
@@ -41,30 +147,41 @@ const UIModule = (() => {
         }
     };
 
-    const showNotification = (message, type = 'info') => {
-        clearTimeout(notificationTimeout);
+    const showNotification = (message, type = 'info', duration = 3000) => {
+        // Clear any existing notification
+        if (activeNotification) {
+            clearTimeout(notificationTimeout);
+            activeNotification.classList.add('hiding');
+            setTimeout(() => {
+                if (activeNotification && activeNotification.parentNode) {
+                    activeNotification.remove();
+                }
+            }, 300);
+        }
         
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            background: ${type === 'error' ? '#f48771' : type === 'success' ? '#89d185' : '#667eea'};
-            color: white;
-            border-radius: 6px;
-            z-index: 10000;
-            animation: slideIn 0.3s ease-out;
-        `;
+        
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message;
+        notification.appendChild(messageSpan);
         
         document.body.appendChild(notification);
+        activeNotification = notification;
         
         notificationTimeout = setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
+            notification.classList.add('hiding');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+                if (activeNotification === notification) {
+                    activeNotification = null;
+                }
+            }, 300);
+        }, duration);
+
+        console.log(`[UIModule] Notification (${type}): ${message}`);
     };
 
     const updateStatus = (message, type = 'info') => {
@@ -72,8 +189,21 @@ const UIModule = (() => {
         if (statusLeft) {
             const statusItem = statusLeft.querySelector('.status-item');
             if (statusItem) {
-                statusItem.textContent = `🌐 ${message}`;
-                statusItem.style.color = type === 'error' ? '#f48771' : type === 'success' ? '#89d185' : '#d4d4d4';
+                const icons = {
+                    'info': '🌐',
+                    'success': '✅',
+                    'error': '❌',
+                    'warning': '⚠️'
+                };
+                statusItem.textContent = `${icons[type] || '🌐'} ${message}`;
+                
+                const colors = {
+                    'info': '#d4d4d4',
+                    'success': '#89d185',
+                    'error': '#f48771',
+                    'warning': '#ffa726'
+                };
+                statusItem.style.color = colors[type] || '#d4d4d4';
             }
         }
     };
@@ -109,10 +239,25 @@ const UIModule = (() => {
             if (isLoading) {
                 el.disabled = true;
                 el.style.opacity = '0.6';
+                el.style.cursor = 'not-allowed';
             } else {
                 el.disabled = false;
                 el.style.opacity = '1';
+                el.style.cursor = 'pointer';
             }
+        }
+    };
+
+    const hideNotification = () => {
+        if (activeNotification) {
+            clearTimeout(notificationTimeout);
+            activeNotification.classList.add('hiding');
+            setTimeout(() => {
+                if (activeNotification && activeNotification.parentNode) {
+                    activeNotification.remove();
+                }
+                activeNotification = null;
+            }, 300);
         }
     };
 
@@ -121,6 +266,7 @@ const UIModule = (() => {
         showModal,
         hideModal,
         showNotification,
+        hideNotification,
         updateStatus,
         toggleDropdown,
         closeAllDropdowns,
