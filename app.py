@@ -485,4 +485,4 @@ if __name__ == '__main__':
     browser_thread = threading.Thread(target=open_browser, args=(host, port), daemon=True)
     browser_thread.start()
     
-    socketio.run(app, host=host, port=port, debug=debug, use_reloader=False)
+    socketio.run(app, host=host, port=port, debug=debug, use_reloader=False, allow_unsafe_werkzeug=True)
