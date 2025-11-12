@@ -179,45 +179,9 @@
    LAYOUT CONTROLS
    ============================================================================ */
 
-.layout-controls {
-    position: fixed;
-    top: 60px;
-    right: 20px;
-    z-index: 1001;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
 
-.layout-controls button {
-    padding: 8px 12px;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: 13px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
 
-.layout-controls button:hover {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    color: white;
-}
 
-.layout-controls button svg {
-    width: 16px;
-    height: 16px;
-}
 
 /* ============================================================================
    LAYOUT MODAL
@@ -404,36 +368,8 @@
    PROJECT OPEN BUTTON
    ============================================================================ */
 
-.project-open-button {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1001;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
 
-.project-open-button:hover {
-    transform: translateX(-50%) translateY(-2px);
-    box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
-}
 
-.project-open-button svg {
-    width: 20px;
-    height: 20px;
-}
 
 /* ============================================================================
    PROJECT MODAL
@@ -606,3 +542,74 @@
 .resizing * {
     cursor: inherit !important;
 }
+
+/* ============================================================================
+   NOTIFICATION DISPLAY
+   ============================================================================ */
+
+.notification-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.notification-display svg {
+    width: 18px;
+    height: 18px;
+    color: var(--accent-color);
+    flex-shrink: 0;
+}
+
+.notification-display #notificationText {
+    flex: 1;
+}
+
+.notification-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: var(--accent-color);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.notification-btn:hover {
+    background: var(--accent-hover);
+    transform: scale(1.05);
+}
+
+.notification-btn svg {
+    width: 14px;
+    height: 14px;
+    color: white;
+}
+
+/* ============================================================================
+   TOP BAR RIGHT SECTION
+   ============================================================================ */
+
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.integration-buttons {
+    display: flex;
+    gap: 8px;
+}
+
