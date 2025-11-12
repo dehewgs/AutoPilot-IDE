@@ -229,6 +229,62 @@ async function deleteLayoutById(layoutId) {
     }
 }
 
+// ============================================================================
+// WRAPPER FUNCTIONS FOR ASYNC OPERATIONS (Called from onclick attributes)
+// ============================================================================
+// These wrapper functions handle async operations properly from onclick
+// They provide error handling and user feedback
+
+function saveCurrentLayoutWrapper() {
+    saveCurrentLayout().catch(error => {
+        console.error('[LayoutManager] Error in saveCurrentLayout:', error);
+    });
+}
+
+function openLayoutManagerWrapper() {
+    openLayoutManager().catch(error => {
+        console.error('[LayoutManager] Error in openLayoutManager:', error);
+    });
+}
+
+function saveLayoutWithNameWrapper() {
+    saveLayoutWithName().catch(error => {
+        console.error('[LayoutManager] Error in saveLayoutWithName:', error);
+    });
+}
+
+function toggleExtensionAPIWrapper(extId) {
+    toggleExtensionAPI(extId).catch(error => {
+        console.error('[Extensions] Error in toggleExtensionAPI:', error);
+    });
+}
+
+function installExtensionAPIWrapper(extId) {
+    installExtensionAPI(extId).catch(error => {
+        console.error('[Extensions] Error in installExtensionAPI:', error);
+    });
+}
+
+function uninstallExtensionAPIWrapper(extId) {
+    uninstallExtensionAPI(extId).catch(error => {
+        console.error('[Extensions] Error in uninstallExtensionAPI:', error);
+    });
+}
+
+function loadLayoutByIdWrapper(layoutId) {
+    loadLayoutById(layoutId).catch(error => {
+        console.error('[LayoutManager] Error in loadLayoutById:', error);
+    });
+}
+
+function deleteLayoutByIdWrapper(layoutId) {
+    deleteLayoutById(layoutId).catch(error => {
+        console.error('[LayoutManager] Error in deleteLayoutById:', error);
+    });
+}
+
+
+
 function resetLayout() {
     if (confirm('Reset all panels to default positions?')) {
         // Reset to default positions

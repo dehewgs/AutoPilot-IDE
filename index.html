@@ -62,7 +62,7 @@
                     <div class="menu-tab-wrapper">
                         <button class="menu-tab" onclick="toggleDropdown('layoutsMenu', event)">Layouts</button>
                         <div class="dropdown-menu" id="layoutsMenu">
-                            <div class="dropdown-item" onclick="saveCurrentLayout()">
+                            <div class="dropdown-item" onclick="saveCurrentLayoutWrapper()">
                                 <svg class="dropdown-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
                                     <polyline points="17 21 17 13 7 13 7 21"/>
@@ -70,7 +70,7 @@
                                 </svg>
                                 Save Layout
                             </div>
-                            <div class="dropdown-item" onclick="openLayoutManager()">
+                            <div class="dropdown-item" onclick="openLayoutManagerWrapper()">
                                 <svg class="dropdown-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <rect x="3" y="3" width="7" height="7"/>
                                     <rect x="14" y="3" width="7" height="7"/>
@@ -312,7 +312,7 @@
             <div class="save-layout-form">
                 <h3>Save Current Layout</h3>
                 <input type="text" id="layoutNameInput" placeholder="Enter layout name..." />
-                <button onclick="saveLayoutWithName()">Save Layout</button>
+                <button onclick="saveLayoutWithNameWrapper()">Save Layout</button>
             </div>
         </div>
     </div>
