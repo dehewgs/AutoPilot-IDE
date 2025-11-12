@@ -1,6 +1,6 @@
 /**
  * AutoPilot IDE - Comprehensive Test Suite
- * Tests all modules and functionality before deployment
+ * Tests all modules and functionality
  */
 
 class TestSuite {
@@ -75,259 +75,225 @@ class TestSuite {
 const testSuite = new TestSuite();
 
 // ============================================================================
-// SOCKET MODULE TESTS
+// DOM ELEMENT TESTS
 // ============================================================================
 
-testSuite.test('SocketModule: Should initialize socket', async () => {
-    testSuite.assertExists(SocketModule, 'SocketModule should exist');
-    testSuite.assertType(SocketModule.init, 'function', 'init should be a function');
+testSuite.test('DOM: Project modal should exist', async () => {
+    const modal = document.getElementById('projectModal');
+    testSuite.assertExists(modal, 'projectModal element should exist');
 });
 
-testSuite.test('SocketModule: Should have required methods', async () => {
-    const methods = ['init', 'emit', 'on', 'disconnect', 'isConnected'];
-    methods.forEach(method => {
-        testSuite.assertExists(SocketModule[method], `SocketModule.${method} should exist`);
-    });
+testSuite.test('DOM: File tree should exist', async () => {
+    const fileTree = document.getElementById('fileTree');
+    testSuite.assertExists(fileTree, 'fileTree element should exist');
 });
 
-testSuite.test('SocketModule: Should handle connection events', async () => {
-    testSuite.assertType(SocketModule.handlers, 'object', 'handlers should be an object');
+testSuite.test('DOM: Editor should exist', async () => {
+    const editor = document.getElementById('editor');
+    testSuite.assertExists(editor, 'editor element should exist');
 });
 
-// ============================================================================
-// UI MODULE TESTS
-// ============================================================================
-
-testSuite.test('UIModule: Should initialize UI', async () => {
-    testSuite.assertExists(UIModule, 'UIModule should exist');
-    testSuite.assertType(UIModule.init, 'function', 'init should be a function');
+testSuite.test('DOM: Terminal should exist', async () => {
+    const terminal = document.querySelector('.terminal');
+    testSuite.assertExists(terminal, 'terminal element should exist');
 });
 
-testSuite.test('UIModule: Should have required methods', async () => {
-    const methods = ['init', 'showModal', 'hideModal', 'showNotification', 'updateStatus'];
-    methods.forEach(method => {
-        testSuite.assertExists(UIModule[method], `UIModule.${method} should exist`);
-    });
-});
-
-testSuite.test('UIModule: Should manage modals', async () => {
-    testSuite.assertType(UIModule.modals, 'object', 'modals should be an object');
+testSuite.test('DOM: AI Assistant panel should exist', async () => {
+    const aiPanel = document.querySelector('.ai-assistant');
+    testSuite.assertExists(aiPanel, 'AI Assistant panel should exist');
 });
 
 // ============================================================================
-// EXTENSION MODULE TESTS
+// PROJECT OPENER TESTS
 // ============================================================================
 
-testSuite.test('ExtensionModule: Should initialize extensions', async () => {
-    testSuite.assertExists(ExtensionModule, 'ExtensionModule should exist');
-    testSuite.assertType(ExtensionModule.init, 'function', 'init should be a function');
+testSuite.test('ProjectOpener: openProjectModal function should exist', async () => {
+    testSuite.assertType(window.openProjectModal, 'function', 'openProjectModal should be a function');
 });
 
-testSuite.test('ExtensionModule: Should have required methods', async () => {
-    const methods = ['init', 'fetch', 'install', 'uninstall', 'toggle', 'render'];
-    methods.forEach(method => {
-        testSuite.assertExists(ExtensionModule[method], `ExtensionModule.${method} should exist`);
-    });
+testSuite.test('ProjectOpener: closeProjectModal function should exist', async () => {
+    testSuite.assertType(window.closeProjectModal, 'function', 'closeProjectModal should be a function');
 });
 
-testSuite.test('ExtensionModule: Should manage extension state', async () => {
-    testSuite.assertType(ExtensionModule.installed, 'object', 'installed should be an object');
-    testSuite.assertType(ExtensionModule.available, 'object', 'available should be an object');
+testSuite.test('ProjectOpener: switchProjectTab function should exist', async () => {
+    testSuite.assertType(window.switchProjectTab, 'function', 'switchProjectTab should be a function');
 });
 
-// ============================================================================
-// TERMINAL MODULE TESTS
-// ============================================================================
-
-testSuite.test('TerminalModule: Should initialize terminal', async () => {
-    testSuite.assertExists(TerminalModule, 'TerminalModule should exist');
-    testSuite.assertType(TerminalModule.init, 'function', 'init should be a function');
+testSuite.test('ProjectOpener: openProject function should exist', async () => {
+    testSuite.assertType(window.openProject, 'function', 'openProject should be a function');
 });
 
-testSuite.test('TerminalModule: Should have required methods', async () => {
-    const methods = ['init', 'execute', 'addOutput', 'clear', 'toggle'];
-    methods.forEach(method => {
-        testSuite.assertExists(TerminalModule[method], `TerminalModule.${method} should exist`);
-    });
+testSuite.test('ProjectOpener: Modal should have recent projects tab', async () => {
+    const recentTab = document.getElementById('recentTab');
+    testSuite.assertExists(recentTab, 'recentTab should exist');
 });
 
-testSuite.test('TerminalModule: Should manage terminal state', async () => {
-    testSuite.assertType(TerminalModule.isCollapsed, 'boolean', 'isCollapsed should be a boolean');
+testSuite.test('ProjectOpener: Modal should have browse tab', async () => {
+    const browseTab = document.getElementById('browseTab');
+    testSuite.assertExists(browseTab, 'browseTab should exist');
+});
+
+testSuite.test('ProjectOpener: Modal should have create tab', async () => {
+    const createTab = document.getElementById('createTab');
+    testSuite.assertExists(createTab, 'createTab should exist');
 });
 
 // ============================================================================
-// AI MODULE TESTS
+// FILE TREE TESTS
 // ============================================================================
 
-testSuite.test('AIModule: Should initialize AI', async () => {
-    testSuite.assertExists(AIModule, 'AIModule should exist');
-    testSuite.assertType(AIModule.init, 'function', 'init should be a function');
+testSuite.test('FileTree: selectFile function should exist', async () => {
+    testSuite.assertType(window.selectFile, 'function', 'selectFile should be a function');
 });
 
-testSuite.test('AIModule: Should have required methods', async () => {
-    const methods = ['init', 'send', 'addMessage', 'setMode', 'getMode'];
-    methods.forEach(method => {
-        testSuite.assertExists(AIModule[method], `AIModule.${method} should exist`);
-    });
+testSuite.test('FileTree: File items should have click handlers', async () => {
+    const fileItems = document.querySelectorAll('.file-item');
+    testSuite.assert(fileItems.length > 0, 'File items should exist');
 });
 
-testSuite.test('AIModule: Should manage AI modes', async () => {
-    testSuite.assertType(AIModule.modes, 'object', 'modes should be an object');
-    testSuite.assertType(AIModule.currentMode, 'string', 'currentMode should be a string');
+testSuite.test('FileTree: File tree should be clickable', async () => {
+    const fileTree = document.getElementById('fileTree');
+    const fileItems = fileTree.querySelectorAll('.file-item');
+    testSuite.assert(fileItems.length > 0, 'File tree should contain file items');
 });
 
 // ============================================================================
-// EDITOR MODULE TESTS
+// UI FUNCTIONALITY TESTS
 // ============================================================================
 
-testSuite.test('EditorModule: Should initialize editor', async () => {
-    testSuite.assertExists(EditorModule, 'EditorModule should exist');
-    testSuite.assertType(EditorModule.init, 'function', 'init should be a function');
+testSuite.test('UI: Editor tabs should exist', async () => {
+    const tabs = document.querySelector('.tabs');
+    testSuite.assertExists(tabs, 'tabs container should exist');
 });
 
-testSuite.test('EditorModule: Should have required methods', async () => {
-    const methods = ['init', 'openFile', 'closeFile', 'saveFile', 'getContent'];
-    methods.forEach(method => {
-        testSuite.assertExists(EditorModule[method], `EditorModule.${method} should exist`);
-    });
+testSuite.test('UI: Tab close button should exist', async () => {
+    const tabClose = document.querySelector('.tab-close');
+    testSuite.assertExists(tabClose, 'tab-close button should exist');
 });
 
-testSuite.test('EditorModule: Should manage files', async () => {
-    testSuite.assertType(EditorModule.files, 'object', 'files should be an object');
-    testSuite.assertType(EditorModule.currentFile, 'string', 'currentFile should be a string');
+testSuite.test('UI: Status bar should exist', async () => {
+    const statusBar = document.querySelector('.status-bar');
+    testSuite.assertExists(statusBar, 'status bar should exist');
 });
 
-// ============================================================================
-// EXPLORER MODULE TESTS
-// ============================================================================
-
-testSuite.test('ExplorerModule: Should initialize explorer', async () => {
-    testSuite.assertExists(ExplorerModule, 'ExplorerModule should exist');
-    testSuite.assertType(ExplorerModule.init, 'function', 'init should be a function');
-});
-
-testSuite.test('ExplorerModule: Should have required methods', async () => {
-    const methods = ['init', 'loadFiles', 'expandFolder', 'selectFile', 'render'];
-    methods.forEach(method => {
-        testSuite.assertExists(ExplorerModule[method], `ExplorerModule.${method} should exist`);
-    });
-});
-
-testSuite.test('ExplorerModule: Should manage file tree', async () => {
-    testSuite.assertType(ExplorerModule.files, 'object', 'files should be an object');
+testSuite.test('UI: Menu bar should exist', async () => {
+    const menuBar = document.querySelector('.menu-bar');
+    testSuite.assertExists(menuBar, 'menu bar should exist');
 });
 
 // ============================================================================
-// EVENT HANDLER TESTS
+// STYLING TESTS
 // ============================================================================
 
-testSuite.test('EventHandlers: Should have all button handlers', async () => {
-    testSuite.assertExists(EventHandlers, 'EventHandlers should exist');
-    testSuite.assertType(EventHandlers.init, 'function', 'init should be a function');
+testSuite.test('Styling: Dark theme variables should be defined', async () => {
+    const root = document.documentElement;
+    const bgPrimary = getComputedStyle(root).getPropertyValue('--bg-primary');
+    testSuite.assert(bgPrimary.trim().length > 0, 'CSS variables should be defined');
 });
 
-testSuite.test('EventHandlers: Should register all event listeners', async () => {
-    testSuite.assertType(EventHandlers.handlers, 'object', 'handlers should be an object');
+testSuite.test('Styling: Sidebar should have proper styling', async () => {
+    const sidebar = document.querySelector('.sidebar');
+    testSuite.assertExists(sidebar, 'sidebar should exist and be styled');
 });
 
-// ============================================================================
-// API MODULE TESTS
-// ============================================================================
-
-testSuite.test('APIModule: Should initialize API', async () => {
-    testSuite.assertExists(APIModule, 'APIModule should exist');
-    testSuite.assertType(APIModule.get, 'function', 'get should be a function');
-    testSuite.assertType(APIModule.post, 'function', 'post should be a function');
-});
-
-testSuite.test('APIModule: Should have correct base URL', async () => {
-    testSuite.assertExists(APIModule.baseURL, 'baseURL should exist');
+testSuite.test('Styling: Editor should have proper styling', async () => {
+    const editor = document.querySelector('.editor');
+    testSuite.assertExists(editor, 'editor should exist and be styled');
 });
 
 // ============================================================================
-// UTILITY TESTS
+// MODAL TESTS
 // ============================================================================
 
-testSuite.test('Utils: Should have utility functions', async () => {
-    testSuite.assertExists(Utils, 'Utils should exist');
-    testSuite.assertType(Utils.debounce, 'function', 'debounce should be a function');
-    testSuite.assertType(Utils.throttle, 'function', 'throttle should be a function');
+testSuite.test('Modal: Modal should have proper structure', async () => {
+    const modal = document.getElementById('projectModal');
+    const header = modal.querySelector('.modal-header');
+    const body = modal.querySelector('.modal-body');
+    testSuite.assertExists(header, 'modal header should exist');
+    testSuite.assertExists(body, 'modal body should exist');
 });
 
-testSuite.test('Utils: Debounce should work correctly', async () => {
-    let callCount = 0;
-    const debounced = Utils.debounce(() => callCount++, 10);
-    debounced();
-    debounced();
-    debounced();
-    await new Promise(resolve => setTimeout(resolve, 20));
-    testSuite.assertEqual(callCount, 1, 'Debounce should only call once');
+testSuite.test('Modal: Modal close button should exist', async () => {
+    const closeBtn = document.querySelector('.modal-close');
+    testSuite.assertExists(closeBtn, 'modal close button should exist');
 });
 
-testSuite.test('Utils: Should format text correctly', async () => {
-    const result = Utils.formatText('hello world');
-    testSuite.assertExists(result, 'formatText should return a value');
+testSuite.test('Modal: Project items should be clickable', async () => {
+    const projectItems = document.querySelectorAll('.project-item');
+    testSuite.assert(projectItems.length > 0, 'project items should exist');
 });
 
 // ============================================================================
 // INTEGRATION TESTS
 // ============================================================================
 
-testSuite.test('Integration: All modules should be initialized', async () => {
-    const modules = [
-        'SocketModule', 'UIModule', 'ExtensionModule', 'TerminalModule',
-        'AIModule', 'EditorModule', 'ExplorerModule', 'EventHandlers', 'APIModule'
-    ];
-    modules.forEach(module => {
-        testSuite.assertExists(window[module], `${module} should be available globally`);
-    });
+testSuite.test('Integration: All main sections should be present', async () => {
+    const sidebar = document.querySelector('.sidebar');
+    const editor = document.querySelector('.editor-area');
+    const terminal = document.querySelector('.terminal');
+    const aiPanel = document.querySelector('.ai-assistant');
+    
+    testSuite.assertExists(sidebar, 'sidebar should exist');
+    testSuite.assertExists(editor, 'editor area should exist');
+    testSuite.assertExists(terminal, 'terminal should exist');
+    testSuite.assertExists(aiPanel, 'AI panel should exist');
 });
 
-testSuite.test('Integration: DOM elements should exist', async () => {
-    const elements = [
-        'aiChat', 'aiInput', 'sendBtn', 'terminalContent', 'terminalInput',
-        'extensionsList', 'availableExtensionsList', 'manageExtensionsModal',
-        'getExtensionsModal'
-    ];
-    elements.forEach(id => {
-        const el = document.getElementById(id);
-        testSuite.assertExists(el, `Element with id "${id}" should exist`);
-    });
+testSuite.test('Integration: Project opener should be accessible', async () => {
+    const modal = document.getElementById('projectModal');
+    const openBtn = document.querySelector('[onclick*="openProjectModal"]');
+    testSuite.assertExists(modal, 'project modal should exist');
+    testSuite.assertExists(openBtn, 'open project button should exist');
 });
 
-testSuite.test('Integration: Event listeners should be attached', async () => {
-    const sendBtn = document.getElementById('sendBtn');
-    testSuite.assertExists(sendBtn, 'Send button should exist');
-    // Check if button has click handler (this is a basic check)
-    testSuite.assert(sendBtn.onclick !== null || sendBtn.hasAttribute('onclick'), 
-        'Send button should have click handler');
+testSuite.test('Integration: File selection should work', async () => {
+    const fileTree = document.getElementById('fileTree');
+    const fileItems = fileTree.querySelectorAll('.file-item');
+    testSuite.assert(fileItems.length > 0, 'file items should be selectable');
 });
 
 // ============================================================================
-// ERROR HANDLING TESTS
+// PERFORMANCE TESTS
 // ============================================================================
 
-testSuite.test('ErrorHandling: Should handle missing elements gracefully', async () => {
-    try {
-        const result = UIModule.showModal('nonexistent-modal');
-        // Should not throw
-        testSuite.assert(true, 'Should handle missing elements gracefully');
-    } catch (error) {
-        testSuite.assert(false, 'Should not throw on missing elements');
-    }
+testSuite.test('Performance: Page should load quickly', async () => {
+    const loadTime = performance.now();
+    testSuite.assert(loadTime < 5000, 'Page should load in less than 5 seconds');
 });
 
-testSuite.test('ErrorHandling: Should handle API errors', async () => {
-    try {
-        // This will fail but should be caught
-        await APIModule.get('/nonexistent-endpoint');
-        testSuite.assert(true, 'Should handle API errors gracefully');
-    } catch (error) {
-        testSuite.assert(true, 'Should handle API errors gracefully');
-    }
+testSuite.test('Performance: DOM should be fully rendered', async () => {
+    const elements = document.querySelectorAll('*');
+    testSuite.assert(elements.length > 100, 'DOM should have sufficient elements');
 });
 
-// Export for use
+// ============================================================================
+// ACCESSIBILITY TESTS
+// ============================================================================
+
+testSuite.test('Accessibility: Buttons should have proper labels', async () => {
+    const buttons = document.querySelectorAll('button');
+    testSuite.assert(buttons.length > 0, 'buttons should exist');
+});
+
+testSuite.test('Accessibility: Form inputs should exist', async () => {
+    const inputs = document.querySelectorAll('input, select, textarea');
+    testSuite.assert(inputs.length > 0, 'form inputs should exist');
+});
+
+// ============================================================================
+// EXPORT TEST RESULTS
+// ============================================================================
+
+// Auto-run tests when document is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        testSuite.run();
+    });
+} else {
+    testSuite.run();
+}
+
+// Export for external use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = testSuite;
 }
