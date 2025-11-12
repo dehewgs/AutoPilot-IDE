@@ -2177,3 +2177,61 @@
     </script>
 </body>
 </html>
+
+<script>
+// Tree View Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize file tree with click handlers
+    const fileTree = document.getElementById('fileTree');
+    if (fileTree) {
+        const fileItems = fileTree.querySelectorAll('.file-item');
+        fileItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Remove active class from all items
+                fileItems.forEach(i => i.classList.remove('active'));
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Get file name
+                const fileName = this.textContent.trim();
+                console.log('[TreeView] Selected file:', fileName);
+                
+                // Update editor tab
+                const editorTabs = document.querySelector('.tabs');
+                if (editorTabs) {
+                    const existingTab = editorTabs.querySelector('.tab');
+                    if (existingTab) {
+                        existingTab.textContent = fileName;
+                    }
+                }
+            });
+        });
+    }
+    
+    // Add folder expand/collapse functionality
+    const folderItems = document.querySelectorAll('.file-item[data-type="folder"]');
+    folderItems.forEach(folder => {
+        folder.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('expanded');
+            const children = this.nextElementSibling;
+            if (children && children.classList.contains('folder-children')) {
+                children.style.display = children.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+    });
+    
+    // Make file items in editor tabs closeable
+    const tabCloseButtons = document.querySelectorAll('.tab-close');
+    tabCloseButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const tab = this.closest('.tab');
+            if (tab) {
+                tab.remove();
+            }
+        });
+    });
+});
+</script>
