@@ -2,6 +2,8 @@ import os
 import json
 import shlex
 import logging
+import webbrowser
+import threading
 from pathlib import Path
 from flask import Flask, jsonify, send_from_directory, request
 from flask_socketio import SocketIO, emit
@@ -86,6 +88,17 @@ def validate_command(command):
             return False, f"Dangerous character '{char}' not allowed in commands"
     
     return True, "Valid command"
+
+def open_browser(host, port):
+    """Open browser after a short delay to ensure server is ready"""
+    import time
+    time.sleep(1.5)  # Wait for server to start
+    url = f"http://{host}:{port}"
+    logger.info(f"🌐 Opening browser at {url}")
+    try:
+        webbrowser.open(url)
+    except Exception as e:
+        logger.warning(f"Could not auto-open browser: {e}")
 
 # Initialize extensions file if it doesn't exist
 if not EXTENSIONS_FILE.exists():
@@ -297,17 +310,21 @@ def handle_ai_message(data):
     emit('ai_response', {'message': response})
 
 if __name__ == '__main__':
-    print("=" * 50)
-    print("  AutoPilot IDE - Backend Server")
-    print("=" * 50)
-    print(f"\n[*] Environment: {env}")
-    print(f"[*] Starting server on http://localhost:{app.config.get('PORT', 5000)}")
-    print("[*] Open your browser and navigate to http://localhost:5000")
-    print("[*] Press Ctrl+C to stop the server\n")
-    
     # Get configuration from environment
     host = os.environ.get('HOST', '127.0.0.1')
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('DEBUG', 'True').lower() == 'true'
+    
+    print("=" * 60)
+    print("  🚀 AutoPilot IDE - Backend Server")
+    print("=" * 60)
+    print(f"\n[*] Environment: {env}")
+    print(f"[*] Starting server on http://{host}:{port}")
+    print("[*] 🌐 Browser will open automatically...")
+    print("[*] Press Ctrl+C to stop the server\n")
+    
+    # Start browser in a separate thread to avoid blocking
+    browser_thread = threading.Thread(target=open_browser, args=(host, port), daemon=True)
+    browser_thread.start()
     
     socketio.run(app, host=host, port=port, debug=debug)
