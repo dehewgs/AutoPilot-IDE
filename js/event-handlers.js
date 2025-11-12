@@ -1,6 +1,7 @@
 /**
  * AutoPilot IDE - Event Handlers Module
  * Centralized event listener management and UI action routing
+ * Fixed: All UI synchronization bugs and proper app integration
  */
 
 const EventHandlers = (() => {
@@ -36,8 +37,10 @@ const EventHandlers = (() => {
         setupAIHandlers();
         setupGlobalHandlers();
         
-        // Initialize project system UI
-        initializeProjectUI();
+        // Initialize project system UI - AFTER a short delay to ensure app is ready
+        setTimeout(() => {
+            initializeProjectUI();
+        }, 100);
         
         console.log('[EventHandlers] ✓ All event handlers registered');
     };
@@ -308,6 +311,9 @@ const EventHandlers = (() => {
                 break;
             case 'configure-project':
                 console.log('[Action] Opening project configuration...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('Project configuration coming soon!', 'info');
+                }
                 break;
 
             // Extension actions
@@ -342,9 +348,15 @@ const EventHandlers = (() => {
                 break;
             case 'split-terminal':
                 console.log('[Action] Splitting terminal...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('Split terminal coming soon!', 'info');
+                }
                 break;
             case 'new-terminal':
                 console.log('[Action] Creating new terminal...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('New terminal coming soon!', 'info');
+                }
                 break;
 
             // AI actions
@@ -353,20 +365,35 @@ const EventHandlers = (() => {
                 break;
             case 'new-chat':
                 if (typeof AIModule !== 'undefined') {
-                    AIModule.newChat();
+                    AIModule.clear();
+                    if (typeof UIModule !== 'undefined') {
+                        UIModule.showNotification('Chat cleared', 'info');
+                    }
                 }
                 break;
             case 'ai-settings':
                 console.log('[Action] Opening AI settings...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('AI settings coming soon!', 'info');
+                }
                 break;
             case 'attach-file':
                 console.log('[Action] Attaching file...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('File attachment coming soon!', 'info');
+                }
                 break;
             case 'add-context':
                 console.log('[Action] Adding context...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('Context addition coming soon!', 'info');
+                }
                 break;
             case 'voice-input':
                 console.log('[Action] Starting voice input...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('Voice input coming soon!', 'info');
+                }
                 break;
 
             // Integration actions
@@ -386,9 +413,15 @@ const EventHandlers = (() => {
             // Theme actions
             case 'theme-dark':
                 console.log('[Action] Switching to dark theme...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('Already using dark theme', 'info');
+                }
                 break;
             case 'theme-light':
                 console.log('[Action] Switching to light theme...');
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('Light theme coming soon!', 'info');
+                }
                 break;
             case 'open-theme-dir':
                 console.log('[Action] Opening theme directory...');
@@ -399,6 +432,9 @@ const EventHandlers = (() => {
             case 'toggle-editor':
             case 'toggle-ai':
                 console.log('[Action] Toggling panel:', action);
+                if (typeof UIModule !== 'undefined') {
+                    UIModule.showNotification('Panel toggle coming soon!', 'info');
+                }
                 break;
 
             default:
@@ -499,8 +535,12 @@ const EventHandlers = (() => {
                 const project = projectManager.createProject(name, type, location || undefined);
                 console.log('[EventHandlers] Project created:', project);
                 
-                // Update UI
-                updateCurrentProjectDisplay();
+                // CRITICAL FIX: Refresh the entire app display
+                if (typeof app !== 'undefined' && app.refreshProjectDisplay) {
+                    app.refreshProjectDisplay();
+                }
+                
+                // Update recent projects list
                 updateRecentProjectsList();
                 
                 // Close modal
@@ -535,7 +575,11 @@ const EventHandlers = (() => {
         if (pathInput) {
             console.log('[EventHandlers] Browse path:', pathInput.value);
             // In a real implementation, this would open a file browser
-            alert('File browser functionality requires backend integration');
+            if (typeof UIModule !== 'undefined') {
+                UIModule.showNotification('File browser requires backend integration', 'info');
+            } else {
+                alert('File browser functionality requires backend integration');
+            }
         }
     };
 
@@ -579,7 +623,11 @@ const EventHandlers = (() => {
         if (typeof projectManager === 'undefined') return;
 
         if (projectManager.setCurrentProject(projectId)) {
-            updateCurrentProjectDisplay();
+            // CRITICAL FIX: Refresh the entire app display
+            if (typeof app !== 'undefined' && app.refreshProjectDisplay) {
+                app.refreshProjectDisplay();
+            }
+            
             closeProjectModal();
             console.log('[EventHandlers] Opened project:', projectId);
             
@@ -592,57 +640,13 @@ const EventHandlers = (() => {
         }
     };
 
-    const updateCurrentProjectDisplay = () => {
-        if (typeof projectManager === 'undefined') return;
-
-        const currentProject = projectManager.getCurrentProject();
-        if (!currentProject) return;
-
-        // Update project name in sidebar
-        const projectNameEl = document.getElementById('currentProjectName');
-        if (projectNameEl) {
-            projectNameEl.textContent = currentProject.name;
-        }
-
-        // Update file tree
-        updateFileTree(currentProject);
-
-        console.log('[EventHandlers] Updated current project display:', currentProject.name);
-    };
-
-    const updateFileTree = (project) => {
-        const fileTree = document.getElementById('fileTree');
-        if (!fileTree) return;
-
-        if (!project.files || project.files.length === 0) {
-            fileTree.innerHTML = '<div class="empty-state">No files in project</div>';
-            return;
-        }
-
-        fileTree.innerHTML = project.files.map(file => `
-            <div class="file-item" data-file-name="${file.name}">
-                <span class="file-icon">${file.icon}</span>
-                <span>${file.name}</span>
-            </div>
-        `).join('');
-
-        // Add click handlers to file items
-        fileTree.querySelectorAll('.file-item').forEach(item => {
-            item.addEventListener('click', () => {
-                fileTree.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                const fileName = item.getAttribute('data-file-name');
-                console.log('[EventHandlers] Selected file:', fileName);
-            });
-        });
-
-        console.log('[EventHandlers] Updated file tree with', project.files.length, 'files');
-    };
-
     const initializeProjectUI = () => {
-        if (typeof projectManager !== 'undefined') {
-            updateCurrentProjectDisplay();
-            console.log('[EventHandlers] Project UI initialized');
+        if (typeof projectManager !== 'undefined' && typeof app !== 'undefined') {
+            // Use app's refresh method for consistency
+            if (app.refreshProjectDisplay) {
+                app.refreshProjectDisplay();
+                console.log('[EventHandlers] Project UI initialized via app.refreshProjectDisplay()');
+            }
         }
     };
 
@@ -690,7 +694,7 @@ const EventHandlers = (() => {
         input.style.height = 'auto';
 
         // Send to AI module if available
-        if (typeof AIModule !== 'undefined') {
+        if (typeof AIModule !== 'undefined' && AIModule.sendMessage) {
             const mode = document.querySelector('.mode-btn.active')?.getAttribute('data-mode') || 'chat';
             AIModule.sendMessage(message, mode);
         } else {
@@ -699,7 +703,7 @@ const EventHandlers = (() => {
                 if (chat) {
                     const responseEl = document.createElement('div');
                     responseEl.className = 'ai-message';
-                    responseEl.textContent = 'AI response functionality requires backend connection.';
+                    responseEl.textContent = 'AI response functionality requires backend connection. Your message: "' + message + '"';
                     chat.appendChild(responseEl);
                     chat.scrollTop = chat.scrollHeight;
                 }
@@ -713,7 +717,6 @@ const EventHandlers = (() => {
         handleAction,
         openProjectModal,
         closeProjectModal,
-        updateCurrentProjectDisplay,
         updateRecentProjectsList
     };
 })();
