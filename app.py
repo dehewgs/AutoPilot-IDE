@@ -36,8 +36,24 @@ socketio = SocketIO(app, cors_allowed_origins=allowed_origins)
 
 # Whitelist of safe commands for terminal
 ALLOWED_COMMANDS = {
-    'ls', 'dir', 'pwd', 'echo', 'cat', 'head', 'tail', 
-    'python', 'pip', 'npm', 'node', 'git', 'clear', 'help'
+    # Navigation
+    'ls', 'dir', 'pwd', 'cd', 'pushd', 'popd',
+    # File operations
+    'cat', 'head', 'tail', 'grep', 'find', 'cp', 'mv', 'rm', 'mkdir', 'rmdir', 'touch',
+    # Text processing
+    'echo', 'sed', 'awk', 'sort', 'uniq', 'wc', 'cut',
+    # System
+    'clear', 'cls', 'echo', 'whoami', 'date', 'time',
+    # Development
+    'python', 'python3', 'pip', 'pip3', 'npm', 'node', 'git', 'docker',
+    # Help
+    'help', 'man', 'info',
+    # Compression
+    'tar', 'zip', 'unzip', 'gzip', 'gunzip',
+    # Networking
+    'ping', 'curl', 'wget', 'netstat',
+    # Permissions
+    'chmod', 'chown'
 }
 
 def validate_command(command):
@@ -269,7 +285,7 @@ def get_extensions():
         logger.error(f"Error getting extensions: {e}")
         return jsonify({"error": "Failed to load extensions"}), 500
 
-@app.route('/api/extensions/<int:ext_id>/toggle', methods=['POST'])
+@app.route('/api/extensions/<ext_id>/toggle', methods=['POST'])
 def toggle_extension(ext_id):
     """Toggle extension enabled/disabled status"""
     try:
@@ -284,7 +300,7 @@ def toggle_extension(ext_id):
         logger.error(f"Error toggling extension: {e}")
         return jsonify({"error": "Failed to toggle extension"}), 500
 
-@app.route('/api/extensions/<int:ext_id>/install', methods=['POST'])
+@app.route('/api/extensions/<ext_id>/install', methods=['POST'])
 def install_extension(ext_id):
     """Install an extension"""
     try:
@@ -300,7 +316,7 @@ def install_extension(ext_id):
         logger.error(f"Error installing extension: {e}")
         return jsonify({"error": "Failed to install extension"}), 500
 
-@app.route('/api/extensions/<int:ext_id>/uninstall', methods=['POST'])
+@app.route('/api/extensions/<ext_id>/uninstall', methods=['POST'])
 def uninstall_extension(ext_id):
     """Uninstall an extension"""
     try:
@@ -469,4 +485,4 @@ if __name__ == '__main__':
     browser_thread = threading.Thread(target=open_browser, args=(host, port), daemon=True)
     browser_thread.start()
     
-    socketio.run(app, host=host, port=port, debug=debug)
+    socketio.run(app, host=host, port=port, debug=debug, use_reloader=False)

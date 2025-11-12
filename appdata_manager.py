@@ -12,6 +12,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+
+def _validate_path(path_str):
+    """Validate path to prevent directory traversal attacks"""
+    if not path_str or not isinstance(path_str, str):
+        raise ValueError("Invalid path: must be a non-empty string")
+    
+    # Check for directory traversal attempts
+    if '..' in path_str or path_str.startswith('/') or path_str.startswith('\\'):
+        raise ValueError("Invalid path: directory traversal detected")
+    
+    # Only allow alphanumeric, dash, underscore, and dot
+    if not all(c.isalnum() or c in '-_.' for c in path_str):
+        raise ValueError("Invalid path: contains invalid characters")
+    
+    return path_str
+
+
 class AppDataManager:
     """Manages application data storage in AppData directory"""
     
@@ -81,6 +98,7 @@ class AppDataManager:
         if not project_id:
             raise ValueError("Project must have an 'id' field")
         
+        project_id = _validate_path(project_id)
         project_file = self.get_projects_dir() / f"{project_id}.json"
         
         with open(project_file, 'w', encoding='utf-8') as f:
@@ -91,6 +109,7 @@ class AppDataManager:
     
     def load_project(self, project_id):
         """Load project data by ID"""
+        project_id = _validate_path(project_id)
         project_file = self.get_projects_dir() / f"{project_id}.json"
         
         if not project_file.exists():

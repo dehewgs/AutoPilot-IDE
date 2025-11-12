@@ -52,6 +52,29 @@ const Utils = (() => {
         escapeHtml,
         generateId,
         sleep,
+    /**
+     * Sanitize HTML to prevent XSS attacks
+     * @param {string} html - HTML string to sanitize
+     * @returns {string} Sanitized HTML
+     */
+    sanitizeHTML: (html) => {
+        const div = document.createElement('div');
+        div.textContent = html;
+        return div.innerHTML;
+    },
+
+    /**
+     * Safely set innerHTML with sanitization
+     * @param {HTMLElement} element - Element to update
+     * @param {string} html - HTML content to set
+     */
+    setInnerHTML: (element, html) => {
+        if (!element) return;
+        const div = document.createElement('div');
+        div.textContent = html;
+        element.innerHTML = div.innerHTML;
+    },
+
         clone
     };
 })();

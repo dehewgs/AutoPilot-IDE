@@ -3,7 +3,7 @@
  */
 
 const APIModule = (() => {
-    const baseURL = 'http://localhost:5000/api';
+    const baseURL = `${window.location.origin}/api`;
 
     const handleError = (error, endpoint) => {
         console.error(`[APIModule] Error on ${endpoint}:`, error);

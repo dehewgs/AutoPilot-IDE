@@ -10,7 +10,7 @@ const SocketModule = (() => {
         console.log('[SocketModule] Initializing...');
         
         try {
-            socket = io('http://localhost:5000', {
+            socket = io(window.location.origin, {
                 reconnection: true,
                 reconnectionDelay: 1000,
                 reconnectionDelayMax: 5000,
