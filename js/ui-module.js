@@ -1,6 +1,6 @@
 /**
  * UI Module - Handles UI interactions and updates
- * Fixed: Notification positioning to center top, not covering integration buttons
+ * Fixed: Notification positioning in menu bar row (Window/Theme/Extensions area)
  */
 
 const UIModule = (() => {
@@ -35,27 +35,28 @@ const UIModule = (() => {
         style.textContent = `
             .notification {
                 position: fixed;
-                top: 60px;
+                top: 32px;
                 left: 50%;
                 transform: translateX(-50%);
-                padding: 14px 24px;
-                border-radius: 8px;
-                z-index: 10000;
-                font-size: 14px;
+                padding: 8px 20px;
+                border-radius: 6px;
+                z-index: 9999;
+                font-size: 13px;
                 font-weight: 500;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
                 backdrop-filter: blur(10px);
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                min-width: 300px;
-                max-width: 500px;
+                gap: 8px;
+                min-width: 250px;
+                max-width: 450px;
                 animation: slideDown 0.3s ease-out;
+                pointer-events: none;
             }
 
             .notification::before {
                 content: '';
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .notification-info {
@@ -101,7 +102,7 @@ const UIModule = (() => {
             @keyframes slideDown {
                 from {
                     opacity: 0;
-                    transform: translateX(-50%) translateY(-20px);
+                    transform: translateX(-50%) translateY(-10px);
                 }
                 to {
                     opacity: 1;
@@ -116,7 +117,7 @@ const UIModule = (() => {
                 }
                 to {
                     opacity: 0;
-                    transform: translateX(-50%) translateY(-20px);
+                    transform: translateX(-50%) translateY(-10px);
                 }
             }
 
